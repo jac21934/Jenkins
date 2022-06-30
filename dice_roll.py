@@ -43,58 +43,100 @@ class DiceResult:
                 if self.numSides == 20:
         
                     if res == 20:
-                        msg += + " *CRIT*"
+                        msg += " *CRIT*"
                     elif res == 1:
-                        msg += " *CRIT FAIL*\n"
+                        msg += " *CRIT FAIL*"
             
                 msg += '\n' 
 
+            val = sum(self.resultList)
+
+            sum_msg = ''
             if self.mod > 0:    
-                modifier_msg = "Modifer: " + str(self.mod) + '\n'
-                
+                sum_msg += "Sum: " + str(val) + '\n'
+                sum_msg += "Modifer: " + str(self.mod) + '\n'
+                val += self.mod
 
-                val = sum(self.resultList) + self.mod
 
-                modifier_msg  += "Result: " + str(val) + '\n'
+            sum_msg  += "Result: " + str(val) + '\n'
 
-                msg += text_tools.add_bar(modifier_msg, "above")
+            msg += text_tools.add_bar(sum_msg, "above")
 
-        elif self.adv == 1:
+
+        elif self.adv == 1 or self.adv == -1:
+            
             for res in self.resultList:
-       
-                msg += str(res)
-                if self.numSides == 20:
-        
-                    if res == 20:
-                        msg += + " *CRIT*"
-                    elif res == 1:
-                        msg += " *CRIT FAIL*\n"
+
+                for r in res:
+                    msg += str(r)
+                    if self.numSides == 20:
             
-                msg += '\n' 
-
-            if self.mod > 0:    
-                modifier_msg = "Modifer: " + str(self.mod) + '\n'
+                        if r == 20:
+                            msg += " *CRIT*"
+                        elif r == 1:
+                            msg += " *CRIT FAIL*"
                 
+                    msg += '\n' 
 
-                val = sum(self.resultList) + self.mod
+                if self.adv == 1:
+                    adv_message = "Max: " + str(max(res))
+                elif self.adv == -1:
+                    adv_message = "Min: " + str(min(res))
+                else:
+                    raise Exception(f"Unknown advantage type {self.adv}")
 
-                modifier_msg  += "Result: " + str(val) + '\n'
+                if len(self.resultList) == 1:
+                    adv_message += '\n'
+                    val = 0
+                    if self.mod > 0:    
+                        adv_message += "Modifer: " + str(self.mod) + '\n'
+                        
+                    for res in self.resultList:
+                        if self.adv == 1:
+                            val += max(res)
+                        elif self.adv == -1:
+                            val += min(res)
+                        
+                    val += self.mod
 
-                msg += text_tools.add_bar(modifier_msg, "above")
+                    adv_message  += "Result: " + str(val) + '\n'
+
+                msg += text_tools.add_bar(adv_message, "above")
+                    
+                msg += '\n'
+
+            if len(self.resultList) > 1:
+                sum_msg = ''
+                val = 0
+ 
+                for res in self.resultList:
+                    if self.adv == 1:
+                        val += max(res)
+                    elif self.adv == -1:
+                        val += min(res)
+                sum_msg += "Sum: " + str(val) + '\n'
+                if self.mod > 0:    
+                    sum_msg += "Modifer: " + str(self.mod) + '\n'
+                                            
+                val += self.mod
+
+                sum_msg  += "Result: " + str(val) + '\n'
+
+                msg += text_tools.add_bar(sum_msg, "above")
 
 
         return msg
 
 def _getMod(msg:str) -> int:
     mod = re.sub(plus_whitespace_regex, '', msg)
-    print(mod)
+    
     return int(mod)
 
-def _getAdv(msg:str) -> int:
+def _getAdv(msg:str) ->int:
     adv = 0
 
     results = adv_dis_regex.findall(msg)
-    print(results)
+    
 
     if results:
         if results[0] == "adv":
@@ -109,7 +151,7 @@ def roll(msg:str):
     results = dice_regex.findall(msg)
     adv = _getAdv(msg)
 
-    print(results)
+    
 
     response = ""
 
@@ -139,7 +181,7 @@ def roll(msg:str):
         if dice_num > 100:
             raise Exception("Please roll less than 100 dice")
 
-        print("HERE")
+        
 
     if dice_list:
         response = "Rolling "
