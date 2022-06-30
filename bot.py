@@ -69,11 +69,31 @@ async def userinfo_error(ctx: commands.Context, error: commands.CommandError):
 async def close(ctx):
     await _send_message(ctx, 'Shutting down.')
     await bot.close()
-
+# Players
 @bot.command()
 async def players(ctx):
     message = player.list_players()
     await _send_message(ctx, message)
+
+# Stats
+@bot.command()
+async def stats(ctx, *, arg=None):
+    print(ctx)
+    p = None
+    msg = ""
+
+    if arg == None:
+        p = player.get_player_from_id(ctx.author.id)
+    else:
+        p = player.get_player_from_name(arg)
+
+    if p == None:
+        msg = "Unrecognized player"
+
+    else:
+        msg = player.print_player(p)
+
+    await _send_message(ctx, msg)
 
 
 bot.run(TOKEN)
