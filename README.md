@@ -1,3 +1,5 @@
+# Installation
+
 Jenkins is a GMing aid that can roll for players and keep track of stat sheets.
 
 To install run:
@@ -7,5 +9,6 @@ You will need to add a .env file at the top level of the directory that contains
 TOKEN=<Your Bot Token>
 GUILD_ID=<Your Discord Server ID>
 
-Finally to run Jenkins, run:
+# Running Jenkins
+To run Jenkins, run:
 python bot.py
