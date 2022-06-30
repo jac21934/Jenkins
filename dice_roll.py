@@ -24,7 +24,7 @@ class DiceResult:
         if self.mod > 0:
            msg += "+" + str(self.mod) 
         elif self.mod < 0:
-            msg += "-" + str(self.mod) 
+            msg += str(self.mod) 
 
         if self.adv == 1:
             msg += " with adv"
@@ -52,7 +52,7 @@ class DiceResult:
             val = sum(self.resultList)
 
             sum_msg = ''
-            if self.mod > 0:    
+            if self.mod != 0:    
                 sum_msg += "Sum: " + str(val) + '\n'
                 sum_msg += "Modifer: " + str(self.mod) + '\n'
                 val += self.mod
@@ -62,7 +62,8 @@ class DiceResult:
 
             msg += text_tools.add_bar(sum_msg, "above")
 
-
+        # Handling advantage and disadvantage seperately with duplicate code
+        # right now. Not great
         elif self.adv == 1 or self.adv == -1:
             
             for res in self.resultList:
@@ -88,7 +89,7 @@ class DiceResult:
                 if len(self.resultList) == 1:
                     adv_message += '\n'
                     val = 0
-                    if self.mod > 0:    
+                    if self.mod != 0:    
                         adv_message += "Modifer: " + str(self.mod) + '\n'
                         
                     for res in self.resultList:
@@ -148,16 +149,14 @@ def _getAdv(msg:str) ->int:
     return adv
 
 def roll(msg:str):
-    results = dice_regex.findall(msg)
+    dice_results = dice_regex.findall(msg)
     adv = _getAdv(msg)
-
-    
 
     response = ""
 
     dice_list = []
 
-    for res in results:
+    for res in dice_results:
         dice_num, dice_sides = res[0].split('d')
         if dice_num == "":
             dice_num = 1
@@ -167,6 +166,10 @@ def roll(msg:str):
             mod = 0
         dice_num = int(dice_num)
         dice_sides = int(dice_sides)
+
+        if dice_num > 100:
+            raise Exception("Please roll less than 100 dice")
+
 
         # roll the dice. roll twice for each if rolling with adv or dis
         if adv == 0:
@@ -178,11 +181,8 @@ def roll(msg:str):
 
         dice_list.append(diceRoll)
 
-        if dice_num > 100:
-            raise Exception("Please roll less than 100 dice")
-
         
-
+    # Build the message to display
     if dice_list:
         response = "Rolling "
 

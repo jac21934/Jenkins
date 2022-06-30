@@ -27,10 +27,6 @@ async def on_commmand(context):
 
     print(context)
 
-# @bot.event
-# async def on_message(message):
-#     print(message)
-#     await bot.process_commands(message) 
 
 @bot.event
 async def on_ready():
@@ -41,10 +37,6 @@ async def on_ready():
     await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="you"))
 
 
-
-@bot.command()
-async def test(ctx: commands.Context, arg):
-    await _send_message(ctx, arg)
 
 @bot.command()
 async def roll(ctx, *, arg):
@@ -72,6 +64,13 @@ async def userinfo_error(ctx: commands.Context, error: commands.CommandError):
 
     if isinstance(error, commands.BadArgument):
         await _send_message(ctx, 'Could not proccess command')
+
+
+@bot.command()
+async def close(ctx):
+    await _send_message(ctx, 'Shutting down.')
+    await bot.close()
+
 
 bot.run(TOKEN)
 
