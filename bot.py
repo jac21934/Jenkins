@@ -1,5 +1,4 @@
 import discord
-from discord import Game
 from discord.ext import commands
 import os
 from dotenv import load_dotenv
@@ -28,10 +27,10 @@ async def on_commmand(context):
 
     print(context)
 
-@bot.event
-async def on_message(message):
-    print(message)
-    await bot.process_commands(message) 
+# @bot.event
+# async def on_message(message):
+#     print(message)
+#     await bot.process_commands(message) 
 
 @bot.event
 async def on_ready():
@@ -49,11 +48,14 @@ async def test(ctx: commands.Context, arg):
 
 @bot.command()
 async def roll(ctx, *, arg):
+    msg = arg.casefold() 
     try:
-       response =  dice_roll.roll(arg)
+        response =  dice_roll.roll(msg)
 
-    except Exception:
-        await _send_message(ctx, 'Format must include a string of rolls to make')
+    except Exception as e:
+        print(str(e))
+
+        await _send_message(ctx, str(e))
         return
 
     await _send_message(ctx, response)
@@ -63,8 +65,13 @@ async def roll(ctx, *, arg):
 async def userinfo_error(ctx: commands.Context, error: commands.CommandError):
     # if the command above fails for any reason, it will raise `commands.BadArgument`
     # so we handle this in this error handler:
+
+    if isinstance(error, commands.MissingRequiredArgument):
+        await _send_message(ctx, 'I need dice values to roll')
+
+
     if isinstance(error, commands.BadArgument):
-        return await _send_message(ctx, 'Could not proccess command')
+        await _send_message(ctx, 'Could not proccess command')
 
 bot.run(TOKEN)
 
