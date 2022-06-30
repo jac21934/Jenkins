@@ -5,7 +5,6 @@ def add_bar(msg: str, loc: str)->str:
         msg = msg + '\n' + filler + '\n'
     elif loc=="above":
         msg = filler + '\n' +  msg + '\n'
-
     else:
         msg = msg + '\n' + filler + '\n'
 
