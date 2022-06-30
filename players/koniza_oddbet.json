@@ -1,0 +1,25 @@
+{
+    "id": "160458779341750272",
+    "name": "Koniza Oddbet",
+    "level": 2,
+    "stats": {
+        "strength": 0,
+        "endurance": 2,
+        "agility": 1,
+        "charisma": 3,
+        "aura": 1,
+        "thought": 0
+    },
+    "skills":
+    [
+        "Protocal",
+        "Aiming",
+        "Oldtech",
+        "Confidence"
+    ],
+    "abilities":
+    [
+        "Chemical synergy",
+        "Mechano-synergy"
+    ]
+}

@@ -4,7 +4,7 @@ import os
 from dotenv import load_dotenv
 
 import dice_roll
-
+import player
 load_dotenv()
 TOKEN = os.getenv('TOKEN')
 GUILD_ID = os.getenv('GUILD_ID')
@@ -17,7 +17,6 @@ bot = commands.Bot(command_prefix=commands.when_mentioned_or('!'), intents=inten
 def _build_message(msg:str) -> str:
     message = '```' + msg + '```'
     return message
-
 
 async def _send_message(ctx, msg:str):
     await ctx.send(_build_message(msg))
@@ -37,7 +36,7 @@ async def on_ready():
     await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="you"))
 
 
-
+# Roll
 @bot.command()
 async def roll(ctx, *, arg):
     msg = arg.casefold() 
@@ -65,11 +64,16 @@ async def userinfo_error(ctx: commands.Context, error: commands.CommandError):
     if isinstance(error, commands.BadArgument):
         await _send_message(ctx, 'Could not proccess command')
 
-
+# Close
 @bot.command()
 async def close(ctx):
     await _send_message(ctx, 'Shutting down.')
     await bot.close()
+
+@bot.command()
+async def players(ctx):
+    message = player.list_players()
+    await _send_message(ctx, message)
 
 
 bot.run(TOKEN)

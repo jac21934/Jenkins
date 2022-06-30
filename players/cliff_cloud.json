@@ -1,0 +1,25 @@
+{
+    "id": "561948953424429058",
+    "name": "Cliff Cloud",
+    "level": 2,
+    "stats": {
+        "strength": 0,
+        "endurance": 1,
+        "agility": 2,
+        "charisma": 3,
+        "aura": 1,
+        "thought": 0
+    },
+    "skills":
+    [
+        "Throwing",
+        "Dodging",
+        "Mutant Bean Farming",
+        "Item Appraisal"
+    ],
+    "abilities":
+    [
+        "Psychometry (value sense)",
+        "Strong Willed (shrug off mind affects)"
+    ]
+}

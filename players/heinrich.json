@@ -1,0 +1,25 @@
+{
+    "id": "141664827918516225",
+    "name": "Heinrich",
+    "level": 2,
+    "stats": {
+        "strength": 0,
+        "endurance": 0,
+        "agility": 2,
+        "charisma": 3,
+        "aura": 1,
+        "thought": 1
+    },
+    "skills":
+    [
+        "Charlatanry",
+        "Gun Running",
+        "Bulletmancy",
+        "Price wheedling"
+    ],
+    "abilities":
+    [
+        "Hyperactive Quick-draw neurons",
+        "Magi-philanthropy"
+    ]
+}
