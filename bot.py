@@ -65,7 +65,7 @@ async def userinfo_error(ctx: commands.Context, error: commands.CommandError):
         await _send_message(ctx, 'Could not proccess command')
 
 # Close
-@bot.command()
+@bot.command(description="Shuts me down.")
 async def close(ctx):
     await _send_message(ctx, 'Shutting down.')
     await bot.close()
@@ -76,14 +76,18 @@ async def players(ctx):
     await _send_message(ctx, message)
 
 # Stats
-@bot.command()
+@bot.command(brief="Prints the stats of a player.", 
+    description = "Prints the stats of a player. If a name is given, prints the stats of that player, otherwise prints the stats of the player that envokes the command",
+    category="Game Commands")
 async def stats(ctx, *, arg=None):
     print(ctx)
     p = None
     msg = ""
 
     if arg == None:
-        p = player.get_player_from_id(ctx.author.id)
+        print("HERE")
+        print(ctx.author.id)
+        p = player.get_player_from_id(str(ctx.author.id))
     else:
         p = player.get_player_from_name(arg)
 
@@ -95,6 +99,29 @@ async def stats(ctx, *, arg=None):
 
     await _send_message(ctx, msg)
 
+
+@bot.command(brief="Delete's this command message", description="Delete's the message that invokes this command. This has no point.")
+async def delete(ctx):
+    await ctx.message.delete()
+
+
+@bot.command(hidden=True)
+async def say(ctx, *, arg):
+    await ctx.message.delete()
+    await _send_message(ctx, arg)
+
+@bot.command(hidden=True)
+async def ping_message(ctx, role:discord.Role, *, msg):
+    await ctx.message.delete()
+    await ctx.send(f"{role.mention}")
+    await _send_message(ctx, msg)
+
+
+@bot.command(hidden=True)
+async def test(ctx, arg1, *, arg):
+    await ctx.message.delete()
+    await _send_message(ctx, arg1)
+    await _send_message(ctx, arg)
 
 bot.run(TOKEN)
 

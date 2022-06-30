@@ -104,6 +104,7 @@ def _get_stat_string(p, stat_block_width) -> str:
 
     return msg
 
+
 def _get_skill_string(p) -> str:
 
     max_len = len("Skills")
