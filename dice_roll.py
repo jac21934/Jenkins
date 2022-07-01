@@ -148,7 +148,7 @@ def _getAdv(msg:str) ->int:
             raise Exception(f"Unknown advantage type {results[0]}")
     return adv
 
-def roll(msg:str):
+def roll(msg:str, p):
     dice_results = dice_regex.findall(msg)
     adv = _getAdv(msg)
 
@@ -186,6 +186,7 @@ def roll(msg:str):
     if dice_list:
         response = "Rolling "
 
+
         if len(dice_list) == 1:
             response += dice_list[0].getRollName()
 
@@ -198,6 +199,9 @@ def roll(msg:str):
                     response += "and " + dice_list[ii].getRollName()
                 else:
                     response += dice_list[ii].getRollName() + ", "
+
+        if p is not None:
+            response += " for " + p["name"]
 
         response = text_tools.add_bar(response, "below")
 

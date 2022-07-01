@@ -40,8 +40,10 @@ async def on_ready():
 @bot.command()
 async def roll(ctx, *, arg):
     msg = arg.casefold() 
+    p = None
     try:
-        response =  dice_roll.roll(msg)
+        p = player.get_player_from_id(str(ctx.author.id))
+        response =  dice_roll.roll(msg, p)
 
     except Exception as e:
         print(str(e))
@@ -100,7 +102,7 @@ async def stats(ctx, *, arg=None):
     await _send_message(ctx, msg)
 
 
-@bot.command(brief="Delete's this command message", description="Delete's the message that invokes this command. This has no point.")
+@bot.command(brief="Delete's this command's message", description="Delete's the message that invokes this command. This has no point.")
 async def delete(ctx):
     await ctx.message.delete()
 

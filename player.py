@@ -41,7 +41,8 @@ def list_players() -> str:
     msg = ""
 
     for p in players:
-        msg += p["name"] + (" " * (nameregionSize - len(p["name"]))) + str(p["level"]) + "\n"
+        if(p["name"] != "The GM"):
+            msg += p["name"] + (" " * (nameregionSize - len(p["name"]))) + str(p["level"]) + "\n"
 
     if(len(msg_header) >= text_tools.get_text_block_width(msg)):
         msg = text_tools.add_bar(msg_header, "below") + msg
@@ -67,7 +68,10 @@ def print_player(p) -> str:
 
     msg = text_tools.add_bar(msg, "below")
     
-    msg += _get_skill_string(p)
+    skill_msg = _get_skill_string(p)
+    abil_msg = _get_ability_string(p)
+
+    msg += text_tools.merge_text_blocks(skill_msg, abil_msg)
 
     return msg
 
@@ -119,5 +123,21 @@ def _get_skill_string(p) -> str:
         skill_msg += "| " + skill + " " * (max_len - len(skill)) + " |" + "\n"
 
     return skill_msg
+
+def _get_ability_string(p) -> str:
+    max_len = len("Abilities")
+    for abil in p["abilities"]:
+        if len(abil) > max_len:
+            max_len = len(abil)
+
+    abil_msg = " Abilities" + " " * (max_len - len("Abilities")) + " |" + "\n" 
+    abil_msg += "-" * (max_len + 3) + "\n"
+
+    for abil in p["abilities"]:
+        abil_msg += " " + abil + " " * (max_len - len(abil)) + " |" + "\n"
+
+    return abil_msg
+ 
+
 
 print(players)
