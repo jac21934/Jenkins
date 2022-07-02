@@ -140,7 +140,7 @@ class DiceResult:
                     elif self.adv == -1:
                         val += min(res)
                 sum_msg += "Sum: " + str(val) + '\n'
-                if self.mod > 0:    
+                if self.mod != 0:    
                     sum_msg += "Modifer: " + str(self.mod) + '\n'
                                             
                 val += self.mod
