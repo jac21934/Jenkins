@@ -2,8 +2,14 @@ import re
 import text_tools
 from dataclasses import dataclass
 import random
+
+from personalities import SuperProdigy, Blorp, Diamond, Fresh, LowNSlow, Shy
+
 # find "XdY +/- Z"
 dice_regex = re.compile("\\b((?:[1-9][0-9]*)?d[1-9][0-9]*)\s*([+-]\s*[0-9]+)?\\b")
+
+# find <personality> +/- Z
+personality_regex = re.compile("\\b(superprodigy|blorp|diamond|fresh|low\&slow|shy)\s*([+-]\s*[0-9]+)?\\b")
 
 # find whitespace and a plus to remove
 plus_whitespace_regex = re.compile("\\s+|\+")
@@ -11,16 +17,30 @@ plus_whitespace_regex = re.compile("\\s+|\+")
 # find "adv" or "dis"
 adv_dis_regex = re.compile("\\b(adv|dis)")
 
+personalities = {
+                    "superprodigy": SuperProdigy(),
+                    "blorp": Blorp(),
+                    "diamond": Diamond(),
+                    "fresh": Fresh(),
+                    "low&slow": LowNSlow(),
+                    "shy": Shy()
+                }
+
 @dataclass
 class DiceResult:
+    name: str
     numDice: int
     numSides: int
     mod: int
     resultList: list
     adv: int
+    flavor: str
 
     def getRollName(self) -> str:
-        msg = str(self.numDice) + 'd' + str(self.numSides)
+        if self.name == "":
+            msg = str(self.numDice) + 'd' + str(self.numSides)
+        else:
+            msg = self.name
         if self.mod > 0:
            msg += "+" + str(self.mod) 
         elif self.mod < 0:
@@ -58,7 +78,11 @@ class DiceResult:
                 val += self.mod
 
 
-            sum_msg  += "Result: " + str(val) + '\n'
+            sum_msg  += "Result: " + str(val)
+            if self.flavor:
+                sum_msg += " (" + self.flavor + ")" + "\n"
+            else:
+                sum_msg += "\n"
 
             msg += text_tools.add_bar(sum_msg, "above")
 
@@ -125,7 +149,6 @@ class DiceResult:
 
                 msg += text_tools.add_bar(sum_msg, "above")
 
-
         return msg
 
 def _getMod(msg:str) -> int:
@@ -150,6 +173,7 @@ def _getAdv(msg:str) ->int:
 
 def roll(msg:str, p):
     dice_results = dice_regex.findall(msg)
+    dice_results.extend(personality_regex.findall(msg))
     adv = _getAdv(msg)
 
     response = ""
@@ -157,7 +181,16 @@ def roll(msg:str, p):
     dice_list = []
 
     for res in dice_results:
-        dice_num, dice_sides = res[0].split('d')
+        personality = None
+        flavor = None
+        name = ""
+        if res[0] in personalities.keys():
+            dice_num = 1
+            dice_sides = 20
+            personality = personalities[res[0]]
+            name=res[0].capitalize()
+        else:
+            dice_num, dice_sides = res[0].split('d')
         if dice_num == "":
             dice_num = 1
         if res[1]:
@@ -170,14 +203,21 @@ def roll(msg:str, p):
         if dice_num > 100:
             raise Exception("Please roll less than 100 dice")
 
+        def roll(personality, dice_sides):
+            if personality:
+                return personality.roll()
+            else:
+                return random.randint(1, dice_sides)
 
         # roll the dice. roll twice for each if rolling with adv or dis
         if adv == 0:
-            result_list = [random.randint(1, dice_sides) for die in range(dice_num)]
+            result_list = [roll(personality, dice_sides) for die in range(dice_num)]
         else:
-            result_list = [(random.randint(1, dice_sides), random.randint(1, dice_sides)) for die in range(dice_num)]
+            result_list = [(roll(personality, dice_sides), roll(personality, dice_sides)) for die in range(dice_num)]
 
-        diceRoll = DiceResult(numDice=dice_num, numSides=dice_sides, mod=mod, resultList=result_list, adv=adv)
+        if personality:
+            flavor = personality.flavor()
+        diceRoll = DiceResult(name=name,numDice=dice_num, numSides=dice_sides, mod=mod, resultList=result_list, adv=adv, flavor=flavor)
 
         dice_list.append(diceRoll)
 
