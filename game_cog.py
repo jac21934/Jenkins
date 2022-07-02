@@ -1,5 +1,4 @@
-import discord
-from discord.ext import commands, tasks
+from discord.ext import commands
 from discord.ext.commands.core import command
 from jenkins_cog import JenkinsCog
 import player
@@ -11,7 +10,9 @@ class game(JenkinsCog):
 
 
     #roll command
-    @commands.command(pass_context = True)
+    @commands.command(pass_context = True,
+        brief = "Rolls dice for players.",
+        description = "Rolls dice based on XdY +/- Z format. Advantage and disadvantage can be used as well by including adv or dis in the command.")
     async def roll(self, ctx, *, arg):
         msg = arg.casefold() 
         p = None
@@ -41,7 +42,9 @@ class game(JenkinsCog):
             await self._send_message(ctx, 'Could not proccess command')
 
     # Players
-    @commands.command(pass_context = True)
+    @commands.command(pass_context = True,
+        brief = "Lists players and levels.",
+        description="Lists players and levels.")
     async def players(self, ctx):
         message = player.list_players()
         await self._send_message(ctx, message)
@@ -56,8 +59,6 @@ class game(JenkinsCog):
         msg = ""
 
         if arg == None:
-            print("HERE")
-            print(ctx.author.id)
             p = player.get_player_from_id(str(ctx.author.id))
         else:
             p = player.get_player_from_name(arg)

@@ -33,14 +33,23 @@ async def on_ready():
     print('------')
     await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="you"))
 
+# @bot.event
+# async def on_message(message):
+#     print(message)
+#     ctx = await bot.get_context(message)
+#     async with ctx.typing():
+#         await bot.process_commands(message) 
+
 # Close
-@bot.command(description="Shuts me down.")
+@bot.command(brief="Shuts me down.",
+    description="Shuts me down.")
 async def close(ctx):
     await _send_message(ctx, 'Shutting down.')
     await bot.close()
 
 # Delete command
-@bot.command(brief="Delete's this command's message", description="Delete's the message that invokes this command. This has no point.")
+@bot.command(brief="Delete's this command's message", 
+    description="Delete's the message that invokes this command. This has no point.")
 async def delete(ctx):
     await ctx.message.delete()
 

@@ -36,7 +36,6 @@ def list_players() -> str:
 
     nameregionSize = 30
 
-
     msg_header = "Name" + (" " * (nameregionSize - len("Name"))) + "Level"
     msg = ""
 
@@ -55,7 +54,6 @@ def list_players() -> str:
 def print_player(p) -> str:
     stat_block_size = 100
     level_string = "Level " + str(p["level"])
-
 
     msg = p["name"] + " " * int(stat_block_size/2 - len(p["name"]) - len(p["title"])/2)
     msg += p["title"] + " " * int(stat_block_size/2 - len(level_string) - len(p["title"])/2)
