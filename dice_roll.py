@@ -28,6 +28,7 @@ personalities = {
 
 @dataclass
 class DiceResult:
+    name: str
     numDice: int
     numSides: int
     mod: int
@@ -36,7 +37,10 @@ class DiceResult:
     flavor: str
 
     def getRollName(self) -> str:
-        msg = str(self.numDice) + 'd' + str(self.numSides)
+        if self.name == "":
+            msg = str(self.numDice) + 'd' + str(self.numSides)
+        else:
+            msg = self.name
         if self.mod > 0:
            msg += "+" + str(self.mod) 
         elif self.mod < 0:
@@ -179,10 +183,12 @@ def roll(msg:str, p):
     for res in dice_results:
         personality = None
         flavor = None
+        name = ""
         if res[0] in personalities.keys():
             dice_num = 1
             dice_sides = 20
             personality = personalities[res[0]]
+            name=res[0].capitalize()
         else:
             dice_num, dice_sides = res[0].split('d')
         if dice_num == "":
@@ -211,7 +217,7 @@ def roll(msg:str, p):
 
         if personality:
             flavor = personality.flavor()
-        diceRoll = DiceResult(numDice=dice_num, numSides=dice_sides, mod=mod, resultList=result_list, adv=adv, flavor=flavor)
+        diceRoll = DiceResult(name=name,numDice=dice_num, numSides=dice_sides, mod=mod, resultList=result_list, adv=adv, flavor=flavor)
 
         dice_list.append(diceRoll)
 
