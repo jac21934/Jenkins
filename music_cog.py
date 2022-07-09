@@ -6,7 +6,6 @@ from discord.ext import commands
 from discord.ext.commands.core import command
 from jenkins_cog import JenkinsCog
 import youtube_dl
-import pyttsx3
 
 youtube_dl.utils.bug_reports_message = lambda: ''
 
@@ -50,7 +49,6 @@ class music(JenkinsCog):
         self.bot = bot
         self.ytdl = youtube_dl.YoutubeDL(ytdl_format_options)
         self.voice_channel = None
-        self.voice_engine = pyttsx3.init()
 
     async def _check_and_join_channel(self, ctx):
         if ctx.message.author.voice and self.voice_channel == None:
