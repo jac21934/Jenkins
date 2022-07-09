@@ -5,12 +5,11 @@ import os
 import text_tools
 
 players = []
-
+print("Loading players")
 for filename in os.listdir("players"):
     with open(os.path.join("players", filename), 'r') as f:
         data = json.load(f)
         players.append(data)
-
 
 
 def get_player_from_id(id: int):
@@ -25,7 +24,6 @@ def get_player_from_id(id: int):
 def get_player_from_name(name: str):
     player = None
     for p in players:
-        print()
         if name.casefold() in p["name"].casefold():
             player = p
             break
@@ -83,14 +81,10 @@ def _get_stat_string(p, stat_block_width) -> str:
 
     remainder = (stat_block_width -2) % stat_width + 1
 
-    print(remainder)
-
     if remainder % 2 == 0:
         msg += " " * int(remainder/2)
     else:
         msg += " " * (int(remainder/2) + 1)
-
-    print(p["stats"].keys())
 
     for s in p["stats"].keys():
         stat_string = s[0:3].upper() + " = " + str(p["stats"][s])
@@ -138,4 +132,3 @@ def _get_ability_string(p) -> str:
  
 
 
-print(players)

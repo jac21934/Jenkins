@@ -14,7 +14,6 @@ def add_bar(msg: str, loc: str)->str:
 def get_text_block_width(msg:str)->int:
 
     lines = msg.split('\n')
-    print(lines)
 
     line_lens = [len(line) for line in lines]
 

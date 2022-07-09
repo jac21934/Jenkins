@@ -6,8 +6,11 @@ from discord.ext import commands
 from discord.ext.commands.core import command
 from jenkins_cog import JenkinsCog
 import youtube_dl
+import pyttsx3
 
 youtube_dl.utils.bug_reports_message = lambda: ''
+
+ffmpeg = "C:/ffmpeg/bin/ffmpeg.exe"
 
 ytdl_format_options = {
     'format': 'bestaudio/best',
@@ -36,15 +39,25 @@ class YTDLSource(discord.PCMVolumeTransformer):
         if 'entries' in data:
             # take first item from a playlist
             data = data['entries'][0]
-        filename = data['title'] if stream else ytdl.prepare_filename(data)
-        return filename
+        filename = data['url'] if stream else ytdl.prepare_filename(data)
+        return filename, data['title']
+
+
 
 class music(JenkinsCog):
 
     def __init__(self, bot):
         self.bot = bot
-        self.FFMPEG_OPTIONS = {'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5','options': '-vn'}
         self.ytdl = youtube_dl.YoutubeDL(ytdl_format_options)
+        self.voice_channel = None
+        self.voice_engine = pyttsx3.init()
+
+    async def _check_and_join_channel(self, ctx):
+        if ctx.message.author.voice and self.voice_channel == None:
+            self.voice_channel = ctx.message.author.voice
+            await self.voice_channel.channel.connect()
+        else:
+            pass
 
 
     @commands.command(pass_context = True,
@@ -57,27 +70,35 @@ class music(JenkinsCog):
         else:
             await self._send_message(ctx, "You're not in a voice channel")
     
+
+
     @commands.command(pass_context = True,
         brief = "Tells me to leave your voice channel.",
         description = "Tells me to join your voice channel.")
     async def leave(self, ctx):
         server = ctx.message.guild.voice_client
+        self.voice_channel = None
         # self.queue.clear()
         await server.disconnect()
+
 
     @commands.command(pass_context=True,
         brief = "Play's the audio from a youtube url",
         description = "Play's the audio from a youtube url")
     async def play(self, ctx, url):
-        try :
 
+        await self._check_and_join_channel(ctx)
+
+
+        try :
             server = ctx.message.guild
             voice_channel = server.voice_client
             
             async with ctx.typing():
-                filename = await YTDLSource.from_url(url=url, stream=True, loop=self.bot.loop, ytdl=self.ytdl)
-                voice_channel.play(discord.FFmpegPCMAudio(executable="ffmpeg.exe", source=filename))
-            await self._send_message(ctx, 'Now playing: {}'.format(filename))
+                filename, title = await YTDLSource.from_url(url=url, stream=True, loop=self.bot.loop, ytdl=self.ytdl)
+                print(filename)
+                voice_channel.play(discord.FFmpegPCMAudio(executable=ffmpeg, source=filename))
+            await self._send_message(ctx, 'Now playing: {}'.format(title))
         except Exception as e:
             print(str(e))
             await self._send_message(ctx, str(e))
@@ -93,3 +114,17 @@ class music(JenkinsCog):
 
         if isinstance(error, commands.BadArgument):
             await self._send_message(ctx, 'Could not proccess command')
+
+    @commands.command(pass_context=True,
+                    brief = "Piano",
+                    description = "Piano")
+    async def piano(self, ctx):
+        await self._check_and_join_channel(ctx)
+
+        server = ctx.message.guild
+        voice_channel = server.voice_client
+        source = discord.FFmpegPCMAudio(executable=ffmpeg, source="piano.wav")
+        voice_channel.play(source)
+
+
+

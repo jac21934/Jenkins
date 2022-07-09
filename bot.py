@@ -3,8 +3,6 @@ from discord.ext import commands
 import os
 from dotenv import load_dotenv
 
-# import dice_roll
-# import player
 from music_cog import music
 from game_cog import game
 
@@ -12,9 +10,7 @@ load_dotenv()
 TOKEN = os.getenv('TOKEN')
 GUILD_ID = os.getenv('GUILD_ID')
 
-intents = discord.Intents.default()
-intents.members = True
-
+intents = discord.Intents().all()
 bot = commands.Bot(command_prefix=commands.when_mentioned_or('!'), intents=intents, description="A GMing bot.")
 
 def _build_message(msg:str) -> str:
@@ -27,9 +23,7 @@ async def _send_message(ctx, msg:str):
 
 @bot.event
 async def on_ready():
-    print('Logged in as')
-    print(bot.user.name)
-    print(bot.user.id)
+    print(f'Logged in as {bot.user.name}')
     print('------')
     await bot.change_presence(activity=discord.Activity(type=discord.ActivityType.watching, name="you"))
 
